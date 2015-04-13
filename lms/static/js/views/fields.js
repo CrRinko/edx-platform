@@ -225,6 +225,7 @@
                     value: this.modelValue(),
                     message: this.helpMessage
                 }));
+                this.delegateEvents();
                 return this;
             },
 
@@ -260,6 +261,7 @@
                     value: this.modelValue(),
                     message: this.helpMessage
                 }));
+                this.delegateEvents();
                 return this;
             },
 
@@ -308,7 +310,7 @@
                     selectOptions: this.options.options,
                     message: this.helpMessage
                 }));
-
+                this.delegateEvents();
                 this.updateValueInField();
 
                 if (this.editable === 'toggle') {
@@ -415,7 +417,7 @@
                     value: value,
                     message: this.helpMessage
                 }));
-
+                this.delegateEvents();
                 this.title((this.modelValue() || this.mode === 'edit') ? this.options.title : this.indicators['plus'] + this.options.title);
 
                 if (this.editable === 'toggle') {
@@ -491,6 +493,7 @@
                     linkHref: this.options.linkHref,
                     message: this.helpMessage
                 }));
+                this.delegateEvents();
                 return this;
             },
 
@@ -544,6 +547,7 @@
                     removeButtonIcon: _.result(this, 'iconRemove'),
                     removeButtonTitle: _.result(this, 'removeButtonTitle')
                 }));
+                this.delegateEvents();
                 this.updateButtonsVisibility();
                 this.watchForPageUnload();
                 return this;
@@ -610,15 +614,13 @@
                 this.setCurrentStatus('removing');
                 this.setUploadButtonVisibility('none');
                 this.showRemovalInProgressMessage();
-                 $.ajax({
+                $.ajax({
                     type: 'POST',
-                    url: this.options.imageRemoveUrl,
-                    success: function (data, status, xhr) {
-                        view.imageChangeSucceeded();
-                    },
-                    error: function (xhr, status, error) {
-                       view.showImageChangeFailedMessage(xhr.status, xhr.responseText);
-                    }
+                    url: this.options.imageRemoveUrl
+                }).done(function (data, textStatus, jqXHR) {
+                    view.imageChangeSucceeded();
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    view.showImageChangeFailedMessage(jqXHR.status, jqXHR.responseText);
                 });
             },
 
@@ -646,11 +648,19 @@
                 var humanReadableSize;
                 if (imageBytes < this.options.imageMinBytes) {
                     humanReadableSize = this.bytesToHumanReadable(this.options.imageMinBytes);
-                    this.showErrorMessage(interpolate_text(gettext("Your image must be at least {size} in size."), {size: humanReadableSize}));
+                    this.showErrorMessage(
+                        interpolate_text(
+                            gettext("Your image must be at least {size} in size."), {size: humanReadableSize}
+                        )
+                    );
                     return false;
                 } else if (imageBytes > this.options.imageMaxBytes) {
                     humanReadableSize = this.bytesToHumanReadable(this.options.imageMaxBytes);
-                    this.showErrorMessage(interpolate_text(gettext("Your image must be smaller than {size} in size."), {size: humanReadableSize}));
+                    this.showErrorMessage(
+                        interpolate_text(
+                            gettext("Your image must be smaller than {size} in size."), {size: humanReadableSize}
+                        )
+                    );
                     return false;
                 }
                 return true;
@@ -686,12 +696,15 @@
             },
 
             onBeforeUnload: function () {
-                console.log('Do you really want to go away?');
                 var status = this.getCurrentStatus();
                 if (status === 'uploading') {
-                    return gettext("Upload is in progress. To avoid errors, stay on this page until the process is complete.");
+                    return gettext(
+                        "Upload is in progress. To avoid errors, stay on this page until the process is complete."
+                    );
                 } else if (status === 'removing') {
-                    return gettext("Removal is in progress. To avoid errors, stay on this page until the process is complete.");
+                    return gettext(
+                        "Removal is in progress. To avoid errors, stay on this page until the process is complete."
+                    );
                 }
             },
 
