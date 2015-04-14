@@ -44,6 +44,7 @@
                 position: relative;
                 width: $profile-image-dimension;
                 height: $profile-image-dimension;
+                border-radius: ($baseline/4);
             }
 
             .u-field-upload-button {
@@ -52,6 +53,7 @@
                 position: absolute;
                 top: 0;
                 opacity: 0;
+                @include transition(all $tmg-f1 ease-in-out 0s);
 
                 i {
                     color: $white;
@@ -60,9 +62,11 @@
 
             .upload-button-icon, .upload-button-title {
                 text-align: center;
-                transform: translateY(45px);
+                transform: translateY(35px);
                 display: block;
                 color: $white;
+                margin-bottom: ($baseline/4);
+                line-height: 1.3em;
             }
 
             .upload-button-input {
@@ -92,6 +96,8 @@
             &:hover {
                 .u-field-upload-button, .u-field-remove-button {
                     opacity: 1;
+                    background-color: $shadow-d2;
+                    border-radius: ($baseline/4);
                 }
             }
         }

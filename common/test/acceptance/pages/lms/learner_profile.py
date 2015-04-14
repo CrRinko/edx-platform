@@ -236,8 +236,10 @@ class LearnerProfilePage(FieldsMixin, PageObject):
         """
         self.wait_for_field('image')
         self.wait_for_ajax()
+
+        self.wait_for_element_visibility('.image-frame', "image box is visible")
         image_link = self.q(css='.image-frame').attrs('src')
-        return 'profile-images' in image_link[0] if image_link else False
+        return 'default-profile' not in image_link[0]
 
     @property
     def profile_image_message(self):
@@ -255,5 +257,17 @@ class LearnerProfilePage(FieldsMixin, PageObject):
         self.wait_for_field('image')
         self.wait_for_ajax()
         self.browser.execute_script('$(".u-field-remove-button").css("opacity",1);')
+        self.mouse_hover(self.browser.find_element_by_css_selector('.image-wrapper'))
+
+        self.wait_for_element_visibility('.u-field-remove-button', "remove button is visible")
         self.q(css='.u-field-remove-button').first.click()
+
+        self.mouse_hover(self.browser.find_element_by_css_selector('.image-wrapper'))
         self.wait_for_element_visibility('.u-field-upload-button', "upload button is visible")
+        return True
+
+    @property
+    def remove_link_present(self):
+        self.wait_for_field('image')
+        self.mouse_hover(self.browser.find_element_by_css_selector('.image-wrapper'))
+        return self.q(css='.u-field-remove-button').visible

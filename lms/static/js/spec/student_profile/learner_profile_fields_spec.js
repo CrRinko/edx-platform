@@ -195,7 +195,7 @@ define(['backbone', 'jquery', 'underscore', 'js/common_helpers/ajax_helpers', 'j
 
                     // Verify error message
                     expect($('.message-banner').text().trim())
-                        .toBe('Your image must be smaller than 64 Bytes in size.');
+                        .toBe('Your image must be smaller than 64 bytes in size.');
                 });
 
                 it("can't upload image having size less than min size", function() {
@@ -208,7 +208,7 @@ define(['backbone', 'jquery', 'underscore', 'js/common_helpers/ajax_helpers', 'j
                     imageView.$('.upload-button-input').fileupload('add', {files: [createFakeImageFile(10)]});
 
                     // Verify error message
-                    expect($('.message-banner').text().trim()).toBe('Your image must be at least 16 Bytes in size.');
+                    expect($('.message-banner').text().trim()).toBe('Your image must be at least 16 bytes in size.');
                 });
 
                 it("can't upload and remove image if parental consent required", function() {

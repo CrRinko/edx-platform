@@ -412,7 +412,7 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         self.assert_default_image_has_public_access()
 
         self.my_profile_page.upload_file(filename='list-icon-visited.png')
-        self.assertEqual(self.my_profile_page.profile_image_message, "Your image must be at least 100 Bytes in size.")
+        self.assertEqual(self.my_profile_page.profile_image_message, "Your image must be at least 100 bytes in size.")
         self.my_profile_page.visit()
         self.assertTrue(self.my_profile_page.profile_has_default_image)
 
@@ -450,6 +450,7 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         self.assert_default_image_has_public_access()
 
         self.my_profile_page.upload_file(filename='image.jpg')
+        self.assertTrue(self.my_profile_page.image_upload_success)
         self.assertTrue(self.my_profile_page.remove_profile_image())
         self.assertTrue(self.my_profile_page.profile_has_default_image)
         self.my_profile_page.visit()
@@ -466,10 +467,7 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         And i cannot see the remove image text
         """
         self.assert_default_image_has_public_access()
-
-        self.my_profile_page.upload_file(filename='image.jpg')
-        self.assertTrue(self.my_profile_page.remove_profile_image())
-        self.assertTrue(self.my_profile_page.profile_has_default_image)
+        self.assertFalse(self.my_profile_page.remove_link_present)
 
 
 class DifferentUserLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):

@@ -709,7 +709,7 @@
             },
 
             bytesToHumanReadable: function (size) {
-                var units = ['Bytes', 'KB', 'MB'];
+                var units = ['bytes', 'KB', 'MB'];
                 var i = 0;
                 while(size >= 1024) {
                     size /= 1024;
