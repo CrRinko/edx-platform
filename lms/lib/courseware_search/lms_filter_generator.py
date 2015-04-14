@@ -20,8 +20,8 @@ class LmsSearchFilterGenerator(SearchFilterGenerator):
 
     def filter_dictionary(self, **kwargs):
         """ base implementation which filters via start_date """
-        filter_dictionary = {"start_date": DateRange(None, datetime.utcnow())}
-        if 'user' in kwargs and 'course_id' in kwargs:
+        filter_dictionary = super(LmsSearchFilterGenerator, self).filter_dictionary(**kwargs)
+        if 'user' in kwargs and 'course_id' in kwargs and kwargs['course_id']:
             try:
                 course_key = CourseKey.from_string(kwargs['course_id'])
             except InvalidKeyError:
@@ -34,7 +34,7 @@ class LmsSearchFilterGenerator(SearchFilterGenerator):
                 pass
             if partition_group:
                 partition_group = partition_group.group_id
-        filter_dictionary['content_groups'] = unicode(partition_group)
+            filter_dictionary['content_groups'] = unicode(partition_group)
         return filter_dictionary
 
     def field_dictionary(self, **kwargs):
