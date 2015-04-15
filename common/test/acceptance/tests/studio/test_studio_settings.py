@@ -402,7 +402,7 @@ class AdvancedSettingsValidationTest(StudioCourseTest):
         """
         expected_fields = self.advanced_settings.expected_settings_names
         displayed_fields = self.advanced_settings.displayed_settings_names
-        self.assertEqual(expected_fields, displayed_fields)
+        self.assertEqual(len(expected_fields), len(displayed_fields))
         for field in displayed_fields:
             if field not in expected_fields:
                 self.fail("Field '{}' not expected for Advanced Settings display.".format(field))
