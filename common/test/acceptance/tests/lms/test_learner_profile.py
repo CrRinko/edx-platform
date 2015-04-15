@@ -111,13 +111,12 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         self.assertEqual(profile_page.age_limit_message_present, message is not None)
         self.assertIn(message, profile_page.profile_forced_private_message)
 
-    def assert_default_image_has_public_access(self):
+    def assert_default_image_has_public_access(self, profile_page):
         """
         Assert that profile image has public access.
         """
-        self.visit_my_profile_page(self.MY_USER, privacy=self.PRIVACY_PUBLIC)
-        self.assertTrue(self.my_profile_page.profile_has_default_image)
-        self.assertTrue(self.my_profile_page.profile_has_image_with_public_access())
+        self.assertTrue(profile_page.profile_has_default_image)
+        self.assertTrue(profile_page.profile_has_image_with_public_access())
 
     def test_dashboard_learner_profile_link(self):
         """
@@ -338,14 +337,17 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         Then i cannot see the upload/remove image text
         And i cannot upload/remove the image.
         """
-        self.visit_my_profile_page(self.MY_USER, privacy=self.PRIVACY_PRIVATE)
         year_of_birth = datetime.now().year - 5
+        username, user_id = self.log_in_as_unique_user()
+        profile_page = self.visit_profile_page(username, privacy=self.PRIVACY_PRIVATE)
+
         self.verify_profile_forced_private_message(
-            str(year_of_birth),
+            username,
+            year_of_birth,
             message='You must be over 13 to share a full profile.'
         )
-        self.assertTrue(self.my_profile_page.profile_has_default_image)
-        self.assertFalse(self.my_profile_page.profile_has_image_with_private_access())
+        self.assertTrue(profile_page.profile_has_default_image)
+        self.assertFalse(profile_page.profile_has_image_with_private_access())
 
     def test_user_can_see_default_image_for_public_profile(self):
         """
@@ -357,7 +359,10 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         Then i can see the upload/remove image text
         And i am able to upload new image
         """
-        self.assert_default_image_has_public_access()
+        username, user_id = self.log_in_as_unique_user()
+        profile_page = self.visit_profile_page(username, privacy=self.PRIVACY_PUBLIC)
+
+        self.assert_default_image_has_public_access(profile_page)
 
     def test_user_can_upload_the_profile_image_with_success(self):
         """
@@ -371,12 +376,15 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         Then i can see the changed image
         And i can also see the latest image after reload.
         """
-        self.assert_default_image_has_public_access()
+        username, user_id = self.log_in_as_unique_user()
+        profile_page = self.visit_profile_page(username, privacy=self.PRIVACY_PUBLIC)
 
-        self.my_profile_page.upload_file(filename='image.jpg')
+        self.assert_default_image_has_public_access(profile_page)
+
+        profile_page.upload_file(filename='image.jpg')
         self.assertTrue(self.my_profile_page.image_upload_success)
-        self.my_profile_page.visit()
-        self.assertTrue(self.my_profile_page.image_upload_success)
+        profile_page.visit()
+        self.assertTrue(profile_page.image_upload_success)
 
     def test_user_can_see_error_for_exceeding_max_file_size_limit(self):
         """
@@ -390,12 +398,15 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         Then i can see the error message for file size limit
         And i can still see the default image after page reload.
         """
-        self.assert_default_image_has_public_access()
+        username, user_id = self.log_in_as_unique_user()
+        profile_page = self.visit_profile_page(username, privacy=self.PRIVACY_PUBLIC)
 
-        self.my_profile_page.upload_file(filename='larger_image.jpg')
-        self.assertEqual(self.my_profile_page.profile_image_message, "Your image must be smaller than 1 MB in size.")
-        self.my_profile_page.visit()
-        self.assertTrue(self.my_profile_page.profile_has_default_image)
+        self.assert_default_image_has_public_access(profile_page)
+
+        profile_page.upload_file(filename='larger_image.jpg')
+        self.assertEqual(profile_page.profile_image_message, "Your image must be smaller than 1 MB in size.")
+        profile_page.visit()
+        self.assertTrue(profile_page.profile_has_default_image)
 
     def test_user_can_see_error_for_file_size_below_the_min_limit(self):
         """
@@ -409,12 +420,15 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         Then i can see the error message for minimum file size limit
         And i can still see the default image after page reload.
         """
-        self.assert_default_image_has_public_access()
+        username, user_id = self.log_in_as_unique_user()
+        profile_page = self.visit_profile_page(username, privacy=self.PRIVACY_PUBLIC)
 
-        self.my_profile_page.upload_file(filename='list-icon-visited.png')
-        self.assertEqual(self.my_profile_page.profile_image_message, "Your image must be at least 100 bytes in size.")
-        self.my_profile_page.visit()
-        self.assertTrue(self.my_profile_page.profile_has_default_image)
+        self.assert_default_image_has_public_access(profile_page)
+
+        profile_page.upload_file(filename='list-icon-visited.png')
+        self.assertEqual(profile_page.profile_image_message, "Your image must be at least 100 bytes in size.")
+        profile_page.visit()
+        self.assertTrue(profile_page.profile_has_default_image)
 
     def test_user_can_see_error_for_wrong_file_type(self):
         """
@@ -428,12 +442,15 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         Then i can see the error message for wrong/unsupported file type
         And i can still see the default image after page reload.
         """
-        self.assert_default_image_has_public_access()
+        username, user_id = self.log_in_as_unique_user()
+        profile_page = self.visit_profile_page(username, privacy=self.PRIVACY_PUBLIC)
 
-        self.my_profile_page.upload_file(filename='cohort_users_only_username.csv')
-        self.assertEqual(self.my_profile_page.profile_image_message, "Unsupported file type.")
-        self.my_profile_page.visit()
-        self.assertTrue(self.my_profile_page.profile_has_default_image)
+        self.assert_default_image_has_public_access(profile_page)
+
+        profile_page.upload_file(filename='cohort_users_only_username.csv')
+        self.assertEqual(profile_page.profile_image_message, "Unsupported file type.")
+        profile_page.visit()
+        self.assertTrue(profile_page.profile_has_default_image)
 
     def test_user_can_remove_profile_image(self):
         """
@@ -447,14 +464,17 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         Then i can see the default image
         And i can still see the default image after page reload.
         """
-        self.assert_default_image_has_public_access()
+        username, user_id = self.log_in_as_unique_user()
+        profile_page = self.visit_profile_page(username, privacy=self.PRIVACY_PUBLIC)
 
-        self.my_profile_page.upload_file(filename='image.jpg')
-        self.assertTrue(self.my_profile_page.image_upload_success)
-        self.assertTrue(self.my_profile_page.remove_profile_image())
-        self.assertTrue(self.my_profile_page.profile_has_default_image)
-        self.my_profile_page.visit()
-        self.assertTrue(self.my_profile_page.profile_has_default_image)
+        self.assert_default_image_has_public_access(profile_page)
+
+        profile_page.upload_file(filename='image.jpg')
+        self.assertTrue(profile_page.image_upload_success)
+        self.assertTrue(profile_page.remove_profile_image())
+        self.assertTrue(profile_page.profile_has_default_image)
+        profile_page.visit()
+        self.assertTrue(profile_page.profile_has_default_image)
 
     def test_user_cannot_remove_default_image(self):
         """
@@ -466,8 +486,11 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         Then i can see only the upload image text
         And i cannot see the remove image text
         """
-        self.assert_default_image_has_public_access()
-        self.assertFalse(self.my_profile_page.remove_link_present)
+        username, user_id = self.log_in_as_unique_user()
+        profile_page = self.visit_profile_page(username, privacy=self.PRIVACY_PUBLIC)
+
+        self.assert_default_image_has_public_access(profile_page)
+        self.assertFalse(profile_page.remove_link_present)
 
 
 class DifferentUserLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
