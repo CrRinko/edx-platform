@@ -30,7 +30,10 @@ def redirect_if_blocked(course_key, access_point='enrollment', **kwargs):
     if settings.FEATURES.get('EMBARGO'):
         is_blocked = not check_course_access(course_key, **kwargs)
         if is_blocked:
-            return message_url_path(course_key, access_point)
+            if access_point != "enrollment":
+                if RestrictedCourse.is_disabled_access_check(course_key):
+                    return None
+                return message_url_path(course_key, access_point)
 
 
 def check_course_access(course_key, user=None, ip_address=None, url=None):
@@ -63,6 +66,7 @@ def check_course_access(course_key, user=None, ip_address=None, url=None):
         return True
 
     if ip_address is not None:
+        # Check the restricted course does not have the disable_access_check enabled.
         # Retrieve the country code from the IP address
         # and check it against the allowed countries list for a course
         user_country_from_ip = _country_code_from_ip(ip_address)
