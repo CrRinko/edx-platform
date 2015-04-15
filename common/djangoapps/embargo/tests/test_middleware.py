@@ -51,10 +51,14 @@ class EmbargoMiddlewareAccessTests(UrlResetMixin, ModuleStoreTestCase):
         config_cache.clear()
 
     @patch.dict(settings.FEATURES, {'EMBARGO': True})
-    def test_blocked(self):
-        with restrict_course(self.course.id, access_point='courseware') as redirect_url:
+    @ddt.data(True, False)
+    def test_blocked(self, disable_access):
+        with restrict_course(self.course.id, access_point='courseware', access_check=disable_access) as redirect_url:
             response = self.client.get(self.courseware_url)
-            self.assertRedirects(response, redirect_url)
+            if disable_access:
+                self.assertEqual(response.status_code, 200)
+            else:
+                self.assertRedirects(response, redirect_url)
 
     @patch.dict(settings.FEATURES, {'EMBARGO': True})
     def test_allowed(self):
