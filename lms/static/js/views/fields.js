@@ -563,9 +563,9 @@
 
             uploadButtonTitle: function () {
                 if (this.isShowingPlaceholder()) {
-                    return _.result(this, 'titleAdd')
+                    return _.result(this, 'titleAdd');
                 } else {
-                    return _.result(this, 'titleEdit')
+                    return _.result(this, 'titleEdit');
                 }
             },
 
@@ -574,7 +574,7 @@
             },
 
             isEditingAllowed: function () {
-                return true
+                return true;
             },
 
             isShowingPlaceholder: function () {
@@ -599,7 +599,7 @@
                 }
             },
 
-            clickedUploadButton: function (e, data) {
+            clickedUploadButton: function () {
                 $(this.uploadButtonSelector).fileupload({
                     url: this.options.imageUploadUrl,
                     type: 'POST',
@@ -609,7 +609,7 @@
                 });
             },
 
-            clickedRemoveButton: function (e, data) {
+            clickedRemoveButton: function () {
                 var view = this;
                 this.setCurrentStatus('removing');
                 this.setUploadButtonVisibility('none');
@@ -617,14 +617,14 @@
                 $.ajax({
                     type: 'POST',
                     url: this.options.imageRemoveUrl
-                }).done(function (data, textStatus, jqXHR) {
+                }).done(function () {
                     view.imageChangeSucceeded();
-                }).fail(function (jqXHR, textStatus, errorThrown) {
+                }).fail(function (jqXHR) {
                     view.showImageChangeFailedMessage(jqXHR.status, jqXHR.responseText);
                 });
             },
 
-            imageChangeSucceeded: function (e, data) {
+            imageChangeSucceeded: function () {
                 this.render();
             },
 
@@ -684,11 +684,6 @@
 
             getCurrentStatus: function () {
                 return this.$('.image-wrapper').attr('data-status');
-            },
-
-            inProgress: function() {
-                var status = this.getCurrentStatus();
-                return _.isUndefined(status) ? false : true;
             },
 
             watchForPageUnload: function () {

@@ -6,12 +6,12 @@
 
         var MessageBannerView = Backbone.View.extend({
 
-            initialize: function (options) {
+            initialize: function () {
                 this.template = _.template($('#message_banner-tpl').text());
             },
 
             render: function () {
-                if (this.message === null) {
+                if (_.isUndefined(this.message) || _.isNull(this.message)) {
                     this.$el.html('');
                 } else {
                     this.$el.html(this.template({
@@ -33,5 +33,5 @@
         });
 
         return MessageBannerView;
-    })
+    });
 }).call(this, define || RequireJS.define);

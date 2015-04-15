@@ -382,7 +382,7 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         self.assert_default_image_has_public_access(profile_page)
 
         profile_page.upload_file(filename='image.jpg')
-        self.assertTrue(self.my_profile_page.image_upload_success)
+        self.assertTrue(profile_page.image_upload_success)
         profile_page.visit()
         self.assertTrue(profile_page.image_upload_success)
 
