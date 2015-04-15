@@ -9,6 +9,7 @@
         LearnerProfileFieldViews.AccountPrivacyFieldView = FieldViews.DropdownFieldView.extend({
 
             render: function () {
+                console.log("Render");
                 this._super();
                 this.message();
                 this.updateFieldValue();

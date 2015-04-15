@@ -89,7 +89,7 @@
 
             var learnerProfileView = new LearnerProfileView({
                 el: learnerProfileElement,
-                own_profile: options.own_profile,
+                ownProfile: options.own_profile,
                 has_preferences_access: options.has_preferences_access,
                 accountSettingsModel: accountSettingsModel,
                 preferencesModel: accountPreferencesModel,
