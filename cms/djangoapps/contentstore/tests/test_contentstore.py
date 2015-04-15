@@ -1848,6 +1848,12 @@ class ContentLicenseTest(ContentStoreTestCase):
         self.store.update_item(self.course, None)
         export_course_to_xml(self.store, content_store, self.course.id, root_dir, 'test_license')
         run_file_path = root_dir / "test_license" / "course" / "Run_0.xml"
+        self.assertTrue(
+            run_file_path.isfile(),
+            "Run_0.xml does not exist. Files in directory are: {files}".format(
+                files=run_file_path.parent.files()
+            )
+        )
         run_xml = etree.parse(run_file_path.open())
         self.assertEqual(run_xml.getroot().get("license"), "creative-commons: BY SA")
 
@@ -1860,6 +1866,12 @@ class ContentLicenseTest(ContentStoreTestCase):
         )
         export_course_to_xml(self.store, content_store, self.course.id, root_dir, 'test_license')
         video_file_path = root_dir / "test_license" / "video" / "video_3.xml"
+        self.assertTrue(
+            video_file_path.isfile(),
+            "video_3.xml does not exist. Files in directory are: {files}".format(
+                files=video_file_path.parent.files()
+            )
+        )
         video_xml = etree.parse(video_file_path.open())
         self.assertEqual(video_xml.getroot().get("license"), "all-rights-reserved")
 
